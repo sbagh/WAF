@@ -1,7 +1,7 @@
 import rateLimit from "express-rate-limit";
 import RedisStore from "rate-limit-redis";
 import redisClient from "../redis-client";
-
+import { logRequest } from "../logger";
 import { Request, Response } from "express";
 
 export const rateLimiter = rateLimit({
@@ -13,7 +13,27 @@ export const rateLimiter = rateLimit({
 
    keyGenerator: (req: Request, res: Response) => req.ip!,
    handler: (req: Request, res: Response) => {
-      console.log(`Rate limit exceeded for IP: ${req.ip} `);
+      const remainingRequests = res.getHeader("X-RateLimit-Remaining") as
+         | string
+         | undefined;
+      const resetTime = res.getHeader("X-RateLimit-Reset") as
+         | string
+         | undefined;
+
+      logRequest({
+         timestamp: new Date().toISOString(),
+         ip: req.ip!,
+         method: req.method,
+         url: req.originalUrl,
+         userAgent: req.headers["user-agent"] || "unknown",
+         blockType: "RateLimit",
+         blockReason: "Rate limit exceeded",
+         remainingRequests: remainingRequests
+            ? parseInt(remainingRequests, 10)
+            : 0,
+         windowMs: resetTime ? parseInt(resetTime, 10) * 1000 : 60 * 1000, // Convert to milliseconds
+      });
+
       res.status(429).json({
          message: "Too many requests, please try again later.",
       });
