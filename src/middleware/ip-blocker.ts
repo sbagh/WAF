@@ -10,11 +10,13 @@ interface BlockedIP {
 }
 
 // temp storage of blocked ips
-const filePath = path.join(__dirname, "../tempStore/blockedIPs.json");
+const filePath = path.join(__dirname, "../tempStorage/blockedIPs.json");
 const blockedIPs: BlockedIP[] = JSON.parse(fs.readFileSync(filePath, "utf-8"));
 
 const blockRequestsByIP = (req: Request, res: Response, next: NextFunction) => {
    const clientIP = req.ip;
+
+   console.log("client ip", clientIP);
 
    const blockedIP = blockedIPs.find((block) => block.ip === clientIP);
 

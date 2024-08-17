@@ -4,7 +4,7 @@
       "reason": "This is a test"
    },
    {
-      "ip": "203.0.113.45",
+      "ip": "::1",
       "reason": "This is a test"
    }
 ]
