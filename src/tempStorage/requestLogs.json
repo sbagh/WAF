@@ -1,33 +1,33 @@
 [
   {
-    "timestamp": "2024-08-17T16:50:58.589Z",
+    "timestamp": "2024-08-17T17:05:50.888Z",
     "ip": "::1",
     "method": "GET",
     "url": "/",
     "userAgent": "PostmanRuntime/7.33.0",
-    "remainingRequests": "2",
-    "windowMs": "1723913519"
+    "remainingRequests": 2,
+    "windowMs": 1723914411000
   },
   {
-    "timestamp": "2024-08-17T16:51:08.947Z",
+    "timestamp": "2024-08-17T17:05:51.925Z",
     "ip": "::1",
     "method": "GET",
     "url": "/",
     "userAgent": "PostmanRuntime/7.33.0",
-    "remainingRequests": "1",
-    "windowMs": "1723913519"
+    "remainingRequests": 1,
+    "windowMs": 1723914411000
   },
   {
-    "timestamp": "2024-08-17T16:51:18.551Z",
+    "timestamp": "2024-08-17T17:05:52.757Z",
     "ip": "::1",
     "method": "GET",
     "url": "/",
     "userAgent": "PostmanRuntime/7.33.0",
-    "remainingRequests": "0",
-    "windowMs": "1723913519"
+    "remainingRequests": 0,
+    "windowMs": 1723914411000
   },
   {
-    "timestamp": "2024-08-17T16:51:25.505Z",
+    "timestamp": "2024-08-17T17:05:54.856Z",
     "ip": "::1",
     "method": "GET",
     "url": "/",
@@ -35,10 +35,10 @@
     "blockType": "RateLimit",
     "blockReason": "Rate limit exceeded",
     "remainingRequests": 0,
-    "windowMs": 1723913519000
+    "windowMs": 1723914411000
   },
   {
-    "timestamp": "2024-08-17T16:51:33.705Z",
+    "timestamp": "2024-08-17T17:06:16.942Z",
     "ip": "::1",
     "method": "GET",
     "url": "/",
@@ -46,15 +46,25 @@
     "blockType": "RateLimit",
     "blockReason": "Rate limit exceeded",
     "remainingRequests": 0,
-    "windowMs": 1723913519000
+    "windowMs": 1723914411000
   },
   {
-    "timestamp": "2024-08-17T16:51:50.684Z",
+    "timestamp": "2024-08-17T17:06:30.785Z",
     "ip": "::1",
     "method": "GET",
     "url": "/",
     "userAgent": "PostmanRuntime/7.33.0",
-    "blockType": "IP",
+    "blockType": "IP blocked",
+    "remainingRequests": null,
+    "windowMs": null
+  },
+  {
+    "timestamp": "2024-08-17T17:06:31.872Z",
+    "ip": "::1",
+    "method": "GET",
+    "url": "/",
+    "userAgent": "PostmanRuntime/7.33.0",
+    "blockType": "IP blocked",
     "remainingRequests": null,
     "windowMs": null
   }

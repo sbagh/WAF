@@ -31,7 +31,7 @@ export const rateLimiter = rateLimit({
          remainingRequests: remainingRequests
             ? parseInt(remainingRequests, 10)
             : 0,
-         windowMs: resetTime ? parseInt(resetTime, 10) * 1000 : 60 * 1000, // Convert to milliseconds
+         windowMs: resetTime ? parseInt(resetTime as string, 10) * 1000 : null, // Convert to milliseconds
       });
 
       res.status(429).json({

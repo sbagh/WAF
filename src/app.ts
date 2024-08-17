@@ -9,16 +9,19 @@ const PORT = 3200;
 app.use(blockRequestsByIP);
 app.use(rateLimiter);
 app.use((req, res, next) => {
+   const remainingRequests = res.getHeader("X-RateLimit-Remaining");
+   const resetTime = res.getHeader("X-RateLimit-Reset");
+
    const logEntry = {
       timestamp: new Date().toISOString(),
       ip: req.ip!,
       method: req.method,
       url: req.originalUrl,
       userAgent: req.headers["user-agent"] || "unknown",
-      remainingRequests: res.getHeader("X-RateLimit-Remaining") as
-         | number
-         | null,
-      windowMs: res.getHeader("X-RateLimit-Reset") as number | null,
+      remainingRequests: remainingRequests
+         ? parseInt(remainingRequests as string, 10)
+         : null,
+      windowMs: resetTime ? parseInt(resetTime as string, 10) * 1000 : null,
    };
 
    logRequest(logEntry);
