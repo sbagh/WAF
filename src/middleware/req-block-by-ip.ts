@@ -2,8 +2,6 @@ import { Request, Response, NextFunction } from "express";
 import fs from "fs";
 import path from "path";
 
-export { blockRequestsByIP };
-
 interface BlockedIP {
    ip: string;
    reason: string;
@@ -13,7 +11,11 @@ interface BlockedIP {
 const filePath = path.join(__dirname, "../tempStorage/blockedIPs.json");
 const blockedIPs: BlockedIP[] = JSON.parse(fs.readFileSync(filePath, "utf-8"));
 
-const blockRequestsByIP = (req: Request, res: Response, next: NextFunction) => {
+export const blockRequestsByIP = (
+   req: Request,
+   res: Response,
+   next: NextFunction
+) => {
    const clientIP = req.ip;
 
    console.log("client ip", clientIP);
