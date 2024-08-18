@@ -4,21 +4,22 @@ import redisClient from "../redis-client";
 import { logRequest } from "../logger";
 import { Request, Response } from "express";
 
+const windowTime = 5000; //ms - just for testing
+const maxRequests = 2;
+
 export const rateLimiter = rateLimit({
    store: new RedisStore({
       sendCommand: (...args: string[]) => redisClient.sendCommand(args),
    }),
-   windowMs: 60 * 1000, // 1 minute test
-   max: 3,
+   windowMs: windowTime,
+   max: maxRequests,
 
    keyGenerator: (req: Request, res: Response) => req.ip!,
    handler: (req: Request, res: Response) => {
       const remainingRequests = res.getHeader("X-RateLimit-Remaining") as
          | string
-         | undefined;
-      const resetTime = res.getHeader("X-RateLimit-Reset") as
-         | string
-         | undefined;
+         | null;
+      const resetTime = res.getHeader("X-RateLimit-Reset") as string | null;
 
       logRequest({
          timestamp: new Date().toISOString(),
@@ -31,7 +32,7 @@ export const rateLimiter = rateLimit({
          remainingRequests: remainingRequests
             ? parseInt(remainingRequests, 10)
             : 0,
-         windowMs: resetTime ? parseInt(resetTime as string, 10) * 1000 : null, // Convert to milliseconds
+         windowMs: resetTime ? parseInt(resetTime as string, 10) : null, // Convert to milliseconds
       });
 
       res.status(429).json({

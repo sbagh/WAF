@@ -1,33 +1,24 @@
 [
   {
-    "timestamp": "2024-08-17T17:05:50.888Z",
-    "ip": "::1",
-    "method": "GET",
-    "url": "/",
-    "userAgent": "PostmanRuntime/7.33.0",
-    "remainingRequests": 2,
-    "windowMs": 1723914411000
-  },
-  {
-    "timestamp": "2024-08-17T17:05:51.925Z",
+    "timestamp": "2024-08-18T00:46:17.771Z",
     "ip": "::1",
     "method": "GET",
     "url": "/",
     "userAgent": "PostmanRuntime/7.33.0",
     "remainingRequests": 1,
-    "windowMs": 1723914411000
+    "windowMs": 1723941983
   },
   {
-    "timestamp": "2024-08-17T17:05:52.757Z",
+    "timestamp": "2024-08-18T00:46:19.026Z",
     "ip": "::1",
     "method": "GET",
     "url": "/",
     "userAgent": "PostmanRuntime/7.33.0",
     "remainingRequests": 0,
-    "windowMs": 1723914411000
+    "windowMs": 1723941983
   },
   {
-    "timestamp": "2024-08-17T17:05:54.856Z",
+    "timestamp": "2024-08-18T00:46:20.486Z",
     "ip": "::1",
     "method": "GET",
     "url": "/",
@@ -35,36 +26,25 @@
     "blockType": "RateLimit",
     "blockReason": "Rate limit exceeded",
     "remainingRequests": 0,
-    "windowMs": 1723914411000
+    "windowMs": 1723941983
   },
   {
-    "timestamp": "2024-08-17T17:06:16.942Z",
+    "timestamp": "2024-08-18T00:46:23.893Z",
     "ip": "::1",
     "method": "GET",
     "url": "/",
     "userAgent": "PostmanRuntime/7.33.0",
-    "blockType": "RateLimit",
-    "blockReason": "Rate limit exceeded",
-    "remainingRequests": 0,
-    "windowMs": 1723914411000
+    "remainingRequests": 1,
+    "windowMs": 1723941989
   },
   {
-    "timestamp": "2024-08-17T17:06:30.785Z",
-    "ip": "::1",
-    "method": "GET",
-    "url": "/",
-    "userAgent": "PostmanRuntime/7.33.0",
-    "blockType": "IP blocked",
-    "remainingRequests": null,
-    "windowMs": null
-  },
-  {
-    "timestamp": "2024-08-17T17:06:31.872Z",
+    "timestamp": "2024-08-18T00:46:38.842Z",
     "ip": "::1",
     "method": "GET",
     "url": "/",
     "userAgent": "PostmanRuntime/7.33.0",
     "blockType": "IP blocked",
+    "blockReason": "This is a test",
     "remainingRequests": null,
     "windowMs": null
   }

@@ -21,7 +21,7 @@ app.use((req, res, next) => {
       remainingRequests: remainingRequests
          ? parseInt(remainingRequests as string, 10)
          : null,
-      windowMs: resetTime ? parseInt(resetTime as string, 10) * 1000 : null,
+      windowMs: resetTime ? parseInt(resetTime as string, 10) : null,
    };
 
    logRequest(logEntry);
