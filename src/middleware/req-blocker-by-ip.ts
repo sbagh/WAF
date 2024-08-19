@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import fs from "fs";
 import path from "path";
-import { logRequest } from "../logger";
+import { logRequest } from "../utils/logger";
 
 interface BlockedIP {
    ip: string;

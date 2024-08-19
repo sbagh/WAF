@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { blockRequestsByIP } from "./middleware/req-blocker-by-ip";
 import { rateLimiter } from "./middleware/rate-limiter";
-import { logRequest } from "./logger";
+import { logRequest } from "./utils/logger";
 
 const app = express();
 const PORT = 3200;
@@ -32,7 +32,6 @@ app.get("/", (req: Request, res: Response) => {
    res.send("Welcome to your WAF-protected application!");
 });
 
-// Start the server
 app.listen(PORT, () => {
    console.log(`Server is running on port`, PORT);
 });

@@ -1,7 +1,7 @@
 import rateLimit from "express-rate-limit";
 import RedisStore from "rate-limit-redis";
-import redisClient from "../redis-client";
-import { logRequest } from "../logger";
+import redisClient from "../utils/redis-client";
+import { logRequest } from "../utils/logger";
 import { Request, Response } from "express";
 
 const windowTime = 5000; //ms - just for testing
