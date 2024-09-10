@@ -1,10 +1,14 @@
 [
-   {
-      "ip": "192.168.1.1",
-      "blockReason": "This is a test"
-   },
-   {
-      "ip": "::1",
-      "blockReason": "This is a test"
-   }
+  {
+    "ip": "192.168.1.1",
+    "blockReason": "This is a test"
+  },
+  {
+    "ip": "::4",
+    "blockReason": "This is a test"
+  },
+  {
+    "ip": "::1",
+    "blockReason": "Rate limit exceeded"
+  }
 ]

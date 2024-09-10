@@ -13,7 +13,7 @@ interface LogEntry {
    windowMs?: number | null;
 }
 
-const logFilePath = path.join(__dirname, "./tempStorage/requestLogs.json");
+const logFilePath = path.join(__dirname, "../tempStorage/requestLogs.json");
 
 export const logRequest = (logEntry: LogEntry) => {
    let logs = [];
