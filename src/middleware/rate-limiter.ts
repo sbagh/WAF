@@ -13,14 +13,27 @@ interface BlockedIP {
 
 const WINDOW_TIME = 5000; //ms - just for testing
 const MAX_REQUESTS = 10;
-const RATE_LIMIT_VIOLATION_THRESHOLD = 20;
+const RATE_LIMIT_VIOLATION_THRESHOLD = 5;
+const VIOLATION_EXPIRATION = 20; //seconds
 
 // Load blocked IPs from the JSON file
 const filePath = path.join(__dirname, "../tempStorage/blockedIPs.json");
 let blockedIPs = JSON.parse(fs.readFileSync(filePath, "utf-8"));
 
-// In-memory store to track rate-limit violations (update to Redis)
-const rateLimitViolations: { [key: string]: number } = {};
+// Get the violation count from Redis
+const getViolationCount = async (ip: string): Promise<number> => {
+   const count = await redisClient.get(`rate_limit_violations:${ip}`);
+   return count ? parseInt(count, 10) : 0;
+};
+
+// increment the violation count in Redis
+const incrementViolationCount = async (ip: string): Promise<void> => {
+   await redisClient.incr(`rate_limit_violations:${ip}`);
+   await redisClient.expire(
+      `rate_limit_violations:${ip}`,
+      VIOLATION_EXPIRATION
+   );
+};
 
 export const rateLimiter = rateLimit({
    store: new RedisStore({
@@ -31,18 +44,14 @@ export const rateLimiter = rateLimit({
 
    keyGenerator: (req: Request, res: Response) => req.ip!,
 
-   handler: (req: Request, res: Response) => {
+   handler: async (req: Request, res: Response) => {
       const clientIP = req.ip!;
 
-      if (!rateLimitViolations[clientIP]) {
-         rateLimitViolations[clientIP] = 1;
-      } else {
-         rateLimitViolations[clientIP]++;
-      }
+      // increment and get violation count from Redis
+      await incrementViolationCount(clientIP);
+      const violationCount = await getViolationCount(clientIP);
 
-      // Check if the violation count exceeds the threshold
-      if (rateLimitViolations[clientIP] >= RATE_LIMIT_VIOLATION_THRESHOLD) {
-         // Check if the IP is already blocked
+      if (violationCount >= RATE_LIMIT_VIOLATION_THRESHOLD) {
          const isAlreadyBlocked = blockedIPs.some(
             (blockedIP: BlockedIP) => blockedIP.ip === clientIP
          );
@@ -70,7 +79,7 @@ export const rateLimiter = rateLimit({
             });
          }
       } else {
-         // Log the rate-limit violation without blocking
+         // Log rate-limit violation without blocking
          logRequest({
             timestamp: new Date().toISOString(),
             ip: clientIP,
@@ -87,10 +96,10 @@ export const rateLimiter = rateLimit({
          });
       }
 
-      // Respond with rate-limit exceeded
       res.status(429).json({
          message: "Too many requests, please try again later.",
       });
    },
+
    statusCode: 429,
 });
