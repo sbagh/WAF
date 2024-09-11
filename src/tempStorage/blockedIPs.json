@@ -1,14 +1,15 @@
 [
-  {
-    "ip": "192.168.1.1",
-    "blockReason": "This is a test"
-  },
-  {
-    "ip": "::4",
-    "blockReason": "This is a test"
-  },
-  {
-    "ip": "::1",
-    "blockReason": "Rate limit exceeded"
-  }
+   {
+      "ip": "192.168.1.1",
+      "blockReason": "This is a test"
+   },
+   {
+      "ip": "::4",
+      "blockReason": "This is a test"
+   },
+   {
+      "ip": "::ffff:127.0.0.1",
+      "blockReason": "Rate limit exceeded",
+      "blockedUntil": "2024-09-11T12:08:22.623Z"
+   }
 ]

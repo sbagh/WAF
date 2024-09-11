@@ -6,11 +6,16 @@ import { logRequest } from "../utils/logger";
 interface BlockedIP {
    ip: string;
    blockReason: string;
+   blockedUntil: string;
 }
 
 // temp storage of blocked ips
 const filePath = path.join(__dirname, "../tempStorage/blockedIPs.json");
-const blockedIPs: BlockedIP[] = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+let blockedIPs: BlockedIP[] = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+
+const saveBlockedIPs = () => {
+   fs.writeFileSync(filePath, JSON.stringify(blockedIPs, null, 2));
+};
 
 export const blockRequestsByIP = (
    req: Request,
@@ -18,6 +23,17 @@ export const blockRequestsByIP = (
    next: NextFunction
 ) => {
    const clientIP = req.ip!;
+
+   // Filter out expired blocks
+   blockedIPs = blockedIPs.filter((blockedIP) => {
+      if (new Date(blockedIP.blockedUntil) > new Date()) {
+         return true;
+      } else {
+         return false;
+      }
+   });
+
+   saveBlockedIPs();
 
    const blockedIP = blockedIPs.find((block) => block.ip === clientIP);
 

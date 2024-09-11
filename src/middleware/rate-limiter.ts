@@ -9,16 +9,23 @@ import path from "path";
 interface BlockedIP {
    ip: string;
    blockReason: string;
+   blockedUntil: string;
 }
 
 const WINDOW_TIME = 5000; //ms - just for testing
 const MAX_REQUESTS = 10;
-const RATE_LIMIT_VIOLATION_THRESHOLD = 5;
+const RATE_LIMIT_VIOLATION_THRESHOLD = 3;
 const VIOLATION_EXPIRATION = 20; //seconds
+const BLOCK_DURATION_MS = 15000; //ms
 
-// Load blocked IPs from the JSON file
+// Load blocked IPs from JSON file
 const filePath = path.join(__dirname, "../tempStorage/blockedIPs.json");
 let blockedIPs = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+
+//function to save blocked IPs to the JSON file
+const saveBlockedIPs = () => {
+   fs.writeFileSync(filePath, JSON.stringify(blockedIPs, null, 2));
+};
 
 // Get the violation count from Redis
 const getViolationCount = async (ip: string): Promise<number> => {
@@ -58,13 +65,17 @@ export const rateLimiter = rateLimit({
 
          // Add the IP to the blocklist if it hasn't been added yet
          if (!isAlreadyBlocked) {
+            const blockedUntil = new Date(
+               Date.now() + BLOCK_DURATION_MS
+            ).toISOString();
+
             blockedIPs.push({
                ip: clientIP,
                blockReason: "Rate limit exceeded",
+               blockedUntil,
             });
 
-            // Save to the JSON file
-            fs.writeFileSync(filePath, JSON.stringify(blockedIPs, null, 2));
+            saveBlockedIPs();
 
             logRequest({
                timestamp: new Date().toISOString(),
