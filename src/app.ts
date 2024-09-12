@@ -9,6 +9,7 @@ const PORT = 3200;
 app.use(blockRequestsByIP);
 app.use(rateLimiter);
 app.use((req, res, next) => {
+   // only successful requests get here
    const remainingRequests = res.getHeader("X-RateLimit-Remaining");
    const resetTime = res.getHeader("X-RateLimit-Reset");
 

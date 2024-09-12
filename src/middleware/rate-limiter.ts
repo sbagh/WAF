@@ -2,7 +2,6 @@ import rateLimit from "express-rate-limit";
 import RedisStore from "rate-limit-redis";
 import redisClient from "../utils/redis-client";
 import { logRequest } from "../utils/logger";
-import { Request, Response } from "express";
 import fs from "fs";
 import path from "path";
 
@@ -12,28 +11,30 @@ interface BlockedIP {
    blockedUntil: string;
 }
 
-const WINDOW_TIME = 5000; //ms - just for testing
+const WINDOW_TIME = 3000; //ms - possibly make it a sliding window
 const MAX_REQUESTS = 10;
 const RATE_LIMIT_VIOLATION_THRESHOLD = 3;
-const VIOLATION_EXPIRATION = 20; //seconds
-const BLOCK_DURATION_MS = 15000; //ms
+const VIOLATION_EXPIRATION = 20; //expiration in redis (s)
+const BLOCK_DURATION = 10000; //ms
 
-// Load blocked IPs from JSON file
+// load blocked IPs from JSON file
 const filePath = path.join(__dirname, "../tempStorage/blockedIPs.json");
 let blockedIPs = JSON.parse(fs.readFileSync(filePath, "utf-8"));
 
-//function to save blocked IPs to the JSON file
+console.log("blockedIPs at rate limitter -1 ", blockedIPs);
+
+// save blocked IPs to the JSON file
 const saveBlockedIPs = () => {
    fs.writeFileSync(filePath, JSON.stringify(blockedIPs, null, 2));
 };
 
-// Get the violation count from Redis
+// get violation count from Redis
 const getViolationCount = async (ip: string): Promise<number> => {
    const count = await redisClient.get(`rate_limit_violations:${ip}`);
    return count ? parseInt(count, 10) : 0;
 };
 
-// increment the violation count in Redis
+// increment violation count in Redis
 const incrementViolationCount = async (ip: string): Promise<void> => {
    await redisClient.incr(`rate_limit_violations:${ip}`);
    await redisClient.expire(
@@ -48,25 +49,25 @@ export const rateLimiter = rateLimit({
    }),
    windowMs: WINDOW_TIME,
    max: MAX_REQUESTS,
+   keyGenerator: (req, res) => req.ip!, // i think this is the default, not necessary
 
-   keyGenerator: (req: Request, res: Response) => req.ip!,
-
-   handler: async (req: Request, res: Response) => {
+   // handler for when rate limit is exceeded
+   handler: async (req, res) => {
       const clientIP = req.ip!;
 
       // increment and get violation count from Redis
       await incrementViolationCount(clientIP);
       const violationCount = await getViolationCount(clientIP);
 
+      // block the ip, if it's not already blocked
       if (violationCount >= RATE_LIMIT_VIOLATION_THRESHOLD) {
          const isAlreadyBlocked = blockedIPs.some(
             (blockedIP: BlockedIP) => blockedIP.ip === clientIP
          );
 
-         // Add the IP to the blocklist if it hasn't been added yet
          if (!isAlreadyBlocked) {
             const blockedUntil = new Date(
-               Date.now() + BLOCK_DURATION_MS
+               Date.now() + BLOCK_DURATION
             ).toISOString();
 
             blockedIPs.push({
@@ -74,6 +75,8 @@ export const rateLimiter = rateLimit({
                blockReason: "Rate limit exceeded",
                blockedUntil,
             });
+
+            console.log("blockedIPs at rate limitter -2", blockedIPs);
 
             saveBlockedIPs();
 
