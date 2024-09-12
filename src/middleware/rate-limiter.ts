@@ -21,8 +21,6 @@ const BLOCK_DURATION = 10000; //ms
 const filePath = path.join(__dirname, "../tempStorage/blockedIPs.json");
 let blockedIPs = JSON.parse(fs.readFileSync(filePath, "utf-8"));
 
-console.log("blockedIPs at rate limitter -1 ", blockedIPs);
-
 // save blocked IPs to the JSON file
 const saveBlockedIPs = () => {
    fs.writeFileSync(filePath, JSON.stringify(blockedIPs, null, 2));
@@ -76,37 +74,28 @@ export const rateLimiter = rateLimit({
                blockedUntil,
             });
 
-            console.log("blockedIPs at rate limitter -2", blockedIPs);
-
             saveBlockedIPs();
 
             logRequest({
-               timestamp: new Date().toISOString(),
                ip: clientIP,
                method: req.method,
                url: req.originalUrl,
                userAgent: req.headers["user-agent"] || "unknown",
-               blockType: "IP Blocked after repeated rate-limits",
+               blockType: "IP Blocked",
                blockReason: "Exceeded rate-limit violation threshold",
-               remainingRequests: 0,
-               windowMs: null,
+               logLevel: "warn",
             });
          }
       } else {
          // Log rate-limit violation without blocking
          logRequest({
-            timestamp: new Date().toISOString(),
             ip: clientIP,
             method: req.method,
             url: req.originalUrl,
             userAgent: req.headers["user-agent"] || "unknown",
             blockType: "RateLimit",
             blockReason: "Rate limit exceeded",
-            remainingRequests: 0,
-            windowMs: parseInt(
-               res.getHeader("X-RateLimit-Reset") as string,
-               10
-            ),
+            logLevel: "warn",
          });
       }
 
@@ -114,6 +103,4 @@ export const rateLimiter = rateLimit({
          message: "Too many requests, please try again later.",
       });
    },
-
-   statusCode: 429,
 });
