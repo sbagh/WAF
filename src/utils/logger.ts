@@ -3,6 +3,7 @@ import path from "path";
 
 interface LogEntry {
    timestamp: string;
+   successfull: boolean;
    ip: string;
    method: string;
    url: string;
@@ -11,7 +12,6 @@ interface LogEntry {
    blockReason: string | null;
    remainingRequests: number | null;
    windowMs: number | null;
-   logLevel: "info" | "warn" | "error";
 }
 
 const logFilePath = path.join(__dirname, "../tempStorage/requestLogs.json");
@@ -28,7 +28,7 @@ export const logRequest = (entry: Partial<LogEntry>) => {
    // Default log values
    const logEntry: LogEntry = {
       timestamp: new Date().toISOString(),
-      logLevel: entry.logLevel || "info",
+      successfull: entry.successfull || true,
       ip: entry.ip || "unknown",
       method: entry.method || "unknown",
       url: entry.url || "unknown",

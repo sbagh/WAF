@@ -13,7 +13,7 @@ interface BlockedIP {
 
 const WINDOW_TIME = 3000; //ms - possibly make it a sliding window
 const MAX_REQUESTS = 10;
-const RATE_LIMIT_VIOLATION_THRESHOLD = 3;
+const RATE_LIMIT_VIOLATION_THRESHOLD = 10;
 const VIOLATION_EXPIRATION = 20; //expiration in redis (s)
 const BLOCK_DURATION = 10000; //ms
 
@@ -57,7 +57,7 @@ export const rateLimiter = rateLimit({
       await incrementViolationCount(clientIP);
       const violationCount = await getViolationCount(clientIP);
 
-      // block the ip, if it's not already blocked
+      // block the ip if rate-limit violations have hit the threshold
       if (violationCount >= RATE_LIMIT_VIOLATION_THRESHOLD) {
          const isAlreadyBlocked = blockedIPs.some(
             (blockedIP: BlockedIP) => blockedIP.ip === clientIP
@@ -70,7 +70,7 @@ export const rateLimiter = rateLimit({
 
             blockedIPs.push({
                ip: clientIP,
-               blockReason: "Rate limit exceeded",
+               blockReason: "Rate limit threshold reached",
                blockedUntil,
             });
 
@@ -78,24 +78,26 @@ export const rateLimiter = rateLimit({
 
             logRequest({
                ip: clientIP,
+               successfull: false,
                method: req.method,
                url: req.originalUrl,
                userAgent: req.headers["user-agent"] || "unknown",
                blockType: "IP Blocked",
                blockReason: "Exceeded rate-limit violation threshold",
-               logLevel: "warn",
             });
+
+            console.log("Rate limit violation threshold reached");
          }
       } else {
          // Log rate-limit violation without blocking
          logRequest({
             ip: clientIP,
+            successfull: false,
             method: req.method,
             url: req.originalUrl,
             userAgent: req.headers["user-agent"] || "unknown",
             blockType: "RateLimit",
-            blockReason: "Rate limit exceeded",
-            logLevel: "warn",
+            blockReason: "Rate limit hit",
          });
       }
 

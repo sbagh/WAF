@@ -59,6 +59,7 @@ export const blockRequestsByIP = (
    if (blockedIP) {
       logRequest({
          timestamp: new Date().toISOString(),
+         successfull: false,
          ip: clientIP,
          method: req.method,
          url: req.originalUrl,
@@ -68,6 +69,7 @@ export const blockRequestsByIP = (
          remainingRequests: null,
          windowMs: null,
       });
+
 
       return res.status(403).json({
          message: `Access denied: ${blockedIP.blockReason}`,

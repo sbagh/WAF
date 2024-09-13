@@ -22,7 +22,6 @@ app.use((req, res, next) => {
          ? parseInt(remainingRequests as string, 10)
          : null,
       windowMs: resetTime ? parseInt(resetTime as string, 10) : null,
-      logLevel: "info",
    });
 
    next();
