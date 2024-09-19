@@ -5,6 +5,7 @@ interface LogEntry {
    timestamp: string;
    successfull: boolean;
    ip: string;
+   xForwardedFor: string | null;
    method: string;
    url: string;
    userAgent: string;
@@ -30,6 +31,7 @@ export const logRequest = (entry: Partial<LogEntry>) => {
       timestamp: new Date().toISOString(),
       successfull: entry.successfull || true,
       ip: entry.ip || "unknown",
+      xForwardedFor: entry.xForwardedFor || null,
       method: entry.method || "unknown",
       url: entry.url || "unknown",
       userAgent: entry.userAgent || "unknown",

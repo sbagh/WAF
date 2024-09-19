@@ -52,6 +52,7 @@ export const rateLimiter = rateLimit({
    // handler for when rate limit is exceeded
    handler: async (req, res) => {
       const clientIP = req.ip!;
+      const xHeaders = req.headers["X-Forwarded-For"];
 
       // increment and get violation count from Redis
       await incrementViolationCount(clientIP);
@@ -78,6 +79,7 @@ export const rateLimiter = rateLimit({
 
             logRequest({
                ip: clientIP,
+               xForwardedFor: xHeaders ? xHeaders.toString() : null,
                successfull: false,
                method: req.method,
                url: req.originalUrl,

@@ -54,6 +54,8 @@ export const blockRequestsByIP = (
    // Save any changes back to the file
    saveBlockedIPs(blockedIPs);
 
+   const xHeaders = req.headers["x-forwarded-for"];
+
    // Check if client IP is blocked
    const blockedIP = blockedIPs.find((block) => block.ip === clientIP);
    if (blockedIP) {
@@ -61,6 +63,7 @@ export const blockRequestsByIP = (
          timestamp: new Date().toISOString(),
          successfull: false,
          ip: clientIP,
+         xForwardedFor: xHeaders ? xHeaders.toString() : null,
          method: req.method,
          url: req.originalUrl,
          userAgent: req.headers["user-agent"] || "unknown",
@@ -69,7 +72,6 @@ export const blockRequestsByIP = (
          remainingRequests: null,
          windowMs: null,
       });
-
 
       return res.status(403).json({
          message: `Access denied: ${blockedIP.blockReason}`,
